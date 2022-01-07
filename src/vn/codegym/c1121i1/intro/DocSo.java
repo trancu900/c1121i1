@@ -25,6 +25,7 @@ public class DocSo {
             int unit = number % 10;
             result = lessNinetyNine(dozen, unit);
             System.out.println(result);
+//chan om
             return;
         }
         if (number < 1000) {
