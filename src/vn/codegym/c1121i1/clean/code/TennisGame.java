@@ -20,7 +20,7 @@ public class TennisGame {
     public static final int NUMBER_OF_POINT_END = 4;
 
 
-    public static String getDraw(int score) {
+    private static String getDraw(int score) {
         String result;
         switch (score) {
             case 0:
@@ -42,7 +42,7 @@ public class TennisGame {
         return result;
     }
 
-    public static String getAdvantage(int distance) {
+    private static String getAdvantage(int distance) {
         String result;
         if (distance == 1)
             result = ADVANTAGE_PLAYER_1;
@@ -56,7 +56,7 @@ public class TennisGame {
     }
 
 
-    public static String getCorrespondingCallLowerThanFour(int score) {
+    private static String getCorrespondingCallLowerThanFour(int score) {
         String result = null;
         switch (score) {
             case 0:
