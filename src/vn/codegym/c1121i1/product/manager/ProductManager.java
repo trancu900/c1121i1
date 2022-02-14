@@ -10,8 +10,12 @@ public class ProductManager {
     Scanner scanner = new Scanner(System.in);
     List<Product> products = new ArrayList<>();
 
-    public ProductManager() {
-
+    private static ProductManager instance;
+    public static ProductManager getInstance() {
+        System.out.println("getInstance");
+        if (instance == null)
+            instance = new ProductManager();
+        return instance;
     }
 
     public void show() {
