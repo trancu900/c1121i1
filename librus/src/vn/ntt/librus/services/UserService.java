@@ -24,7 +24,7 @@ public class UserService implements IUserService {
         List<User> newUsers = new ArrayList<>();
         List<String> records = CSVUtils.read(PATH);
         for (String record : records) {
-            newUsers.add(new User(record));
+            newUsers.add(User.parseUser(record));
         }
         return newUsers;
     }
@@ -37,7 +37,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean exist(long id) {
+    public boolean existById(long id) {
         return getById(id) != null;
     }
 }

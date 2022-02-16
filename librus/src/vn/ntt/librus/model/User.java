@@ -7,14 +7,12 @@ public class User {
     private String email;
     private Role role;
 
-
-    public User(String raw) {
-        String[] strings = raw.split(",");
-        this.id = Integer.parseInt(strings[0]);
-        this.fullName = strings[1];
-        this.phone = strings[2];
-        this.email = strings[3];
-        this.role = Role.parseRole(strings[4]);
+    public User(long id, String fullName, String phone, String email, Role role) {
+        this.id = id;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.email = email;
+        this.role = role;
     }
 
     public long getId() {
@@ -54,5 +52,14 @@ public class User {
         return id + "," + fullName + "," + phone + "," + "," + email + "," + role.getValue();
     }
 
+    public static User parseUser(String raw) {
+        String[] strings = raw.split(",");
+        long id = Long.parseLong(strings[0]);
+        String fullName = strings[1];
+        String phone = strings[2];
+        String email = strings[3];
+        Role role = Role.parseRole(strings[4]);
+        return new User(id,fullName,phone,email,role);
+    }
 
 }

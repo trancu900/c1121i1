@@ -9,34 +9,89 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        List<User> users = selectAllUsers();
-        System.out.println(users);
-    }
-    public static List<User> selectAllUsers() {
-         final String SELECT_ALL_USERS = "select * from users";
-        // using try-with-resources to avoid closing resources (boiler plate code)
-        List<User> users = new ArrayList<>();
-        // Step 1: Establishing a Connection
-        try (Connection connection = getConnection();
+        int[] permision = {1, 3, 4};
+//       addUser("rich","rich@gmail.com","aloxia");
+        User a = new User("rich", "rich@gmail.com", "aloxia");
+        try {
+            addUserTransaction(a, permision);
 
-             // Step 2:Create a statement using connection object
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);) {
-            System.out.println(preparedStatement);
-            // Step 3: Execute the query or update query
-            ResultSet rs = preparedStatement.executeQuery();
-
-            // Step 4: Process the ResultSet object.
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String email = rs.getString("email");
-                String country = rs.getString("country");
-                users.add(new User(id, name, email, country));
-            }
         } catch (SQLException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
-        return users;
+    }
+
+
+    private static final String INSERT_USERS_SQL = "INSERT INTO users (name, email, country) VALUES (?, ?, ?);INSERT INTO users (name, email, country) VALUES (?, ?, ++.3?);";
+
+    public static void addUserTransaction(User user, int[] permisions) throws SQLException {
+        Connection conn = null;
+        // for insert a new user
+        PreparedStatement pstmt = null;
+        // for assign permision to user
+        PreparedStatement pstmtAssignment = null;
+        // for getting user id
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            // set auto commit to false
+            conn.setAutoCommit(false);
+            //
+            // Insert user
+            //
+
+
+            pstmt = conn.prepareStatement(INSERT_USERS_SQL, Statement.RETURN_GENERATED_KEYS);
+
+
+            pstmt.setString(1, user.getName());
+            pstmt.setString(2, user.getEmail());
+            pstmt.setString(3, user.getCountry());
+
+            int rowAffected = pstmt.executeUpdate();
+
+            // get user id
+
+            rs = pstmt.getGeneratedKeys();
+
+            int userId = 0;
+            if (rs.next())
+                userId = rs.getInt(1);
+            String sqlPivot = "INSERT INTO user_permision(user_id,permision_id) VALUES(?,?)";
+            pstmtAssignment = conn.prepareStatement(sqlPivot);
+            for (int permisionId : permisions) {
+                pstmtAssignment.setInt(1, userId);
+                pstmtAssignment.setInt(2, permisionId);
+                pstmtAssignment.executeUpdate();
+                int a = 1 / 0;
+            }
+        } catch (SQLException | ArithmeticException ex) {
+            conn.rollback();
+            PreparedStatement prepareStatement = conn.prepareStatement("INSERT INTO messages VALUES (?);");
+            prepareStatement.setString(1, ex.getMessage());
+            prepareStatement.executeUpdate();
+        } finally {
+            conn.commit();
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (pstmtAssignment != null) pstmtAssignment.close();
+            if (conn != null) conn.close();
+        }
+
+    }
+
+    public static void addUser(String name, String email, String country) {
+        try (Connection connection = getConnection();
+             PreparedStatement prepareStatement = connection.prepareStatement(INSERT_USERS_SQL);
+        ) {
+            connection.setAutoCommit(false);
+            prepareStatement.setString(2, email);
+            prepareStatement.setString(3, country);
+            prepareStatement.setString(1, name);
+            prepareStatement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     protected static Connection getConnection() {

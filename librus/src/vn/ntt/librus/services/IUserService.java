@@ -11,6 +11,6 @@ public interface IUserService {
 
     void add(User newUser);
 
-    boolean exist(long id);
+    boolean existById(long id);
 
 }

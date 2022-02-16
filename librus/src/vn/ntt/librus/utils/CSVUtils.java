@@ -1,8 +1,5 @@
 package vn.ntt.librus.utils;
 
-import vn.ntt.librus.model.Product;
-import vn.ntt.librus.model.User;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
